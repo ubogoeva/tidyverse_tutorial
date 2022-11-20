@@ -1,3 +1,4 @@
+
 Unit	Race	Gold	Wood	Pop	HP	Armor Type	Armor	Sight	Speed	Time	Ground Attack	Damage	Cooldown	DPS	Range	Air Attack	Damage	Cooldown	DPS	Range
 Peasant	Human	75	0	1	220	Medium	0	80	190	15	Normal	5.50	2.00	2.75	0	-	-	-	-	-
 Militia	Human	-	-	1	220	Heavy	4	140	270	-	Normal	12.50	1.20	10.42	0	-	-	-	-	-
@@ -69,4 +70,4 @@ Carrion Beetle 1	Undead	-	-	0	140	Heavy	2	120	270	-	Normal	8.50	1.50	5.67	0	-	-	
 Carrion Beetle 2	Undead	-	-	0	275	Heavy	2	120	270	-	Normal	16.50	1.50	11.00	0	-	-	-	-	-
 Carrion Beetle 3	Undead	-	-	0	410	Heavy	2	120	270	-	Normal	24.50	1.50	16.33	0	-	-	-	-	-
 Obsidian Statue	Undead	200	35	3	550	Heavy	4	120	270	45	Magic	7.50	2.10	3.57	57.5	Magic	7.50	2.10	3.57	57.5
-Destroyer	Undead	-	-	5	900	Light	3	140	320	-	Magic	20.00	1.35	14.81	45	Magic	20.00	1.35	14.81
+Destroyer	Undead	-	-	5	900	Light	3	140	320	-	Magic	20.00	1.35	14.81	45	Magic	20.00	1.35	14.81	45
