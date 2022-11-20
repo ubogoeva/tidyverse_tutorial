@@ -2,12 +2,20 @@
 title: "tidyverse learning"
 author: "Elena U"
 date: "Created on 17 Nov, 2022 <br>Last compiled on `r format(Sys.time(), '%d %b, %Y')`"
+execute:
+  echo: true
+  output: false
 format: 
   revealjs:
     slide-number: c/t
     mainfont: Calibri
-    fontsize: 14px
+    # fontsize: 14px
     theme: [default, custom.scss]
+    # mouse-wheel: true
+    auto-play-media: true
+    width: 1280
+    height: 720
+    # logo: figures/icg.png
 
 editor: visual
 ---
@@ -20,7 +28,17 @@ editor: visual
 
 ## Немного контекста
 
-tidyverse - набор пакетов для анализа данных, объединенных сходным синтаксисом и философией. Есть ключевые пакеты (core tidyverse), есть ряд дополнительных для работы с различными данными и форматами (например библиотека `readxl` для чтения .xlsx файлов).
+`tidyverse` - набор пакетов для анализа данных, объединенных сходным синтаксисом и философией. Есть ключевые пакеты (core tidyverse), есть ряд дополнительных для работы с различными данными и форматами (например библиотека `readxl` для чтения .xlsx файлов).
+
+## Философия tidyverse: основные принципы
+
+-   Использование и переиспользование уже существующих структур данных;
+
+-   Сочетание простых функций в конвейере (пайпы);
+
+-   Следование парадигме функционального программирования;
+
+-   Дизайн для людей (например, общий префикс у сходных функций).
 
 ## Core tidyverse
 
@@ -37,31 +55,407 @@ Core tidyverse включает 8 пакетов:
 
 ## Установка tidyverse
 
-Для установки всего набора "пакета с пакетами" достаточно набрать:
+Для установки всего набора "пакета с пакетами" достаточно набрать в консоли R:
 
 ```{r, eval=FALSE, echo=TRUE}
 install.packages("tidyverse")
 ```
 
+Для загрузки пакета:
+
+```{r, eval=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+## Cheatsheets
+
+Для многих пакетов в `tidyverse` есть свои cheatsheets (шпаргалки) - собранные на одном листе краткие описания наиболее часто использующихся команд:
+
+-   Reading and writing: [readr](https://readr.tidyverse.org/#cheatsheet)
+
+-   Data manipulation: [dplyr](https://dplyr.tidyverse.org/#cheat-sheet)
+
+-   Tidying data: [tidyr](https://tidyr.tidyverse.org/#cheatsheet)
+
+-   Visualisation: [ggplot2](https://ggplot2.tidyverse.org/#cheatsheet)
+
+-   String manipulation: [stringr](https://stringr.tidyverse.org/#cheatsheet)
+
+## Пайпы - основа философии tidyverse {.smaller}
+
+::: incremental
+-   Можно записать код так:\
+
+    ```{r}
+    #| eval: false
+    leave_house(get_dressed(get_out_of_bed(wake_up(me))))
+    ```
+
+-   Или создать кучу промежуточных переменных:\
+
+    ```{r}
+    #| eval: false
+    woken_up_me <- wake_up(me)
+    standing_up_me <- get_out_of_bed(woken_up_me)
+    dressed_me <- get_dressed(standing_up_me)
+    ready_me <- leave_house(dressed_me)
+    ```
+
+-   Но для большей читаемости используем:\
+
+    ```{r}
+    #| eval: false
+    me %>%
+      wake_up() %>%
+      get_out_of_bed() %>%
+      get_dressed() %>%
+      leave_house()
+    ```
+:::
+
+## Пайпы - классная иллюстрация
+
+::: columns
+::: {.column width="50%"}
+```{r, out.width = "500px"}
+#| output: true
+#| echo: false
+knitr::include_graphics('figures/pipe.mp4')
+```
+:::
+
+::: {.column width="50%"}
+Без пайпов это было бы: `slice(decorate(bake(mix(ingredients))))`
+
+pipe - `%>%` в тайдиверс стиле. Горячая клавиша: Ctrl Shift M.
+:::
+:::
+
 ## dplyr - крутой пакет для преобразования таблиц
 
-Есть множество dplyr *глаголов* (verbs), которые позволяют сделать любое преобразование с данными. Основными и наиболее часто использующими глаголами являются:
+Есть множество dplyr *глаголов* (verbs), которые позволяют сделать практически любое преобразование данных. Основными и наиболее часто использующими *глаголами* являются:
 
--   select
--   filter
--   mutate
--   group_by
--   summarise
--   arrange
+-   `select` - выбор столбцов по названию или индексу;
+-   `filter` - выбор строк по условию;
+-   `mutate` - создание новых колонок;
+-   `group_by` - группировка;
+-   `summarise` - подсчет суммарных статистик;
+-   `arrange` - сортировка.
 
-Разберем каждый из них поподробнее
+Разберем каждый из них поподробнее.
 
 ## Данные для работы
 
-Статистики по юнитам из Warcraft 3
+Статистики по юнитам из Warcraft 3.
 
-## Select - выбираем нужные столбцы по названию или индексу
+Скачала [отсюда](https://www.unitstatistics.com/warcraft3/) и сохранила в [github](https://raw.githubusercontent.com/ubogoeva/tidyverse_tutorial/master/data/wc3_heroes.txt)-репозитории.
+
+Загрузим данные:
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+#| output: false
+#| code-line-numbers: "|3"
+wc3_units <- read.table('https://raw.githubusercontent.com/ubogoeva/tidyverse_tutorial/master/data/wc3_heroes.txt', 
+                         sep = '\t', header = TRUE, 
+                         na.strings = c('-')) %>% 
+  janitor::clean_names() %>% # чтобы названия колонок были красивее
+  as_tibble() # чтобы превратить датафрейм в тиббл
+```
+
+Здесь важно обратить внимание на параметр\
+`na.strings = c('-')`
+
+-   `janitor::clean_names()` `#` для красивых имен колонок
+
+-   `as_tibble()` `#` чтобы превратить датафрейм в тиббл (tibble)
+
+## Посмотрим на данные
+
+```{r, echo=TRUE}
+#| output: true
+head(wc3_units[,1:7])
+
+```
+
+::: callout-tip
+Кстати тоже самое я обычно записываю с помощью пайпа:
+
+```{r}
+wc3_units %>% head
+```
+:::
+
+## Select - выбираем нужные колонки по названию или индексу
+
+::: columns
+::: {.column .smaller width="40%"}
+Выбрать колонку тип брони (armor_type)
+
+```{r}
+#| layout-ncol: 2
+wc3_units %>% 
+  select(armor_type)
+# также по индексу:
+wc3_units %>% 
+  select(7)
+```
+:::
+
+::: {.column width="60%"}
+Можно выбирать несколько колонок просто перечислением или выбрать несколько колонок с какого-то по другой с помощью двоеточия `:`
+
+```{r}
+wc3_units %>% 
+  select(unit, race, hp)
+wc3_units %>% 
+  select(unit:armor_type, ground_attack:range)
+```
+:::
+:::
+
+## Select + pull для выбора одной колонки
+
+При селекте одной колонки она не превращается в вектор по умолчанию, а остается датасетом с одной колонкой. Но иногда мы хотим извлечь именно вектор, а не маленький датасет. В таком случае понадобится функция `pull`.
+
+Сравните:
+
+::: columns
+::: {.column width="50%"}
+```{r}
+#| output: true
+wc3_units %>% 
+  select(unit) %>% 
+  head(5)
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| output: true
+wc3_units %>% 
+  pull(unit) %>% 
+  head(5)
+```
+:::
+:::
+
+## Filter - выбрать нужные строки по условию
+
+Выберем только юнитов ночных эльфов ('N.Elf')
+
+```{r}
+#| output: false
+wc3_units %>% 
+  filter(race == 'N.Elf')
+
+```
+
+```{r}
+#| echo: false
+#| output: true
+knitr::kable(wc3_units %>% 
+  filter(race == 'N.Elf'))
+```
+
+## Filter - выбрать нужные строки по условию {.smaller}
+
+Можно комбинировать несколько условий, используя логическое И (`&`), ИЛИ (`|`). Например, выберем только юнитов ночных эльфов, показатель урона (damage) которых больше 40:
+
+```{r}
+#| output: false
+wc3_units %>% 
+  filter(race == 'N.Elf' & damage > 40)
+```
+
+```{r}
+#| echo: false
+#| output: true
+knitr::kable(wc3_units %>% 
+  filter(race == 'N.Elf' & damage > 40))
+```
+
+## Mutate - создать новую колонку или изменить существующую
+
+Можно просто составить новую колонку из предыдущих, используя синтаксис `mutate(column_name = <expression>).`
+
+Проверим, что dps (damage per second) = damage / cooldown
+
+```{r}
+#| output-location: slide
+#| output: true
+wc3_units %>% 
+  mutate(damage_per_second = damage / cooldown) %>% 
+  select(unit, damage, cooldown, damage_per_second, dps)
+```
+
+## Mutate - создать новую колонку или изменить существующую
+
+Узнаем показатель отношения dps / на число пищи
+
+```{r}
+#| output: true
+knitr::kable(wc3_units %>% 
+  mutate(dps_food_ratio = dps / pop) %>% 
+  relocate(dps_food_ratio, .after = unit))
+```
+
+## Mutate с условием
+
+Часто нужно заполнить новую колонку определенными значениями в зависимости от условия.
+
+Допустим, мы хотим разделить юнитов по принципу, являются ли они призванными (число пищи `pop` равно `0` или `NA`)
+
+```{r}
+set.seed(1) # для воспроизводимости семплирования 5 строчек
+wc3_units_summon <- wc3_units %>% 
+  mutate(is_summon = (pop == 0) | is.na(pop)) %>% 
+  select(unit, race, pop, is_summon) %>% slice_sample(n = 5)
+```
+
+```{r}
+#| echo: false
+#| output: true
+knitr::kable(wc3_units_summon)
+```
+
+## Mutate + if_else
+
+В качестве примера `if_else` проверка, является ли число положительным или отрицательным
+
+```{r}
+#| output: true
+number <- c(-3, -1, 0, 2, 5)
+if_else(number > 0, 'Положительное число', 
+        'Отрицательное число или ноль')
+```
+
+Синтаксис `if_else`: `(<условие>, выражение если TRUE, выражение если FALSE)`.
+
+::: callout-note
+Функция `if` в R является невекторизованной, то есть с помощью if можно сравнивать только одно значение, а не целый вектор.
+:::
+
+## Mutate с условием + case_when
+
+Если нужно использовать более чем 1 условие, то рекомендую воспользоваться функцией `case_when` из библиотеки dplyr.
+
+```{r}
+#| output: true
+dplyr::case_when(
+  number > 0 ~ "Положительное число",
+  number < 0 ~ "Отрицательное число",
+  number == 0 ~ "Ноль")
+```
+
+## Mutate с условием + case_when
+
+Пример с `mutate`+`case_when` не придумала для wc3 датасета
+
+```{r}
+#| output: true
+tibble(number = c(-3, -1, 0, 2, 5)) %>% 
+  mutate(is_plus = case_when(number > 0 ~ "Положительное число",
+  number < 0 ~ "Отрицательное число",
+  number == 0 ~ "Ноль"))
+```
+
+## Mutate + across - все что нужно, чтобы забыть о циклах
+
+Это супер полезная штука, актуальна в наших исследованиях.
 
 ```{r}
 
 ```
+
+## Group_by + summarise связка
+
+```{r}
+wc3_units %>% 
+  group_by(race) %>% 
+  summarise(median_damage = median(damage, na.rm = TRUE))
+
+# Можно сразу собирать несколько средних:
+wc3_units %>% 
+  group_by(race) %>% 
+  summarise(median_damage = median(damage, na.rm = TRUE, 
+            median_hp = median(hp, na.rm = TRUE)))
+
+```
+
+## Arrange - сортировка
+
+```{r}
+n_elf_dm40 <-  wc3_units %>% 
+  filter(race == 'N.Elf' & damage > 40) %>% 
+  select(unit:race, ground_attack:damage) %>% 
+  arrange(damage)
+```
+
+```{r}
+#| output: true
+#| echo: false
+knitr::kable(n_elf_dm40)
+```
+
+`desc` - для сортировки по убыванию.
+
+Как думаете, есть ли преимущество относительно базовой функции `order` или `sort`, в которой есть параметр `decreasing = TRUE`?
+
+## Другие функции: top_n
+
+`top_n` - вывести топовые значения по какому-то признаку
+
+```{r}
+#| output: true
+wc3_units %>% 
+  top_n(damage, n = 5) %>% # важно эксплицитно писать параметр n = 
+  select(unit, race, damage)
+```
+
+::: callout-note
+Функция `top_n` не сортирует выдачу, для сортировки нужно использовать `arrange`
+:::
+
+## Другие функции: slice, count
+
+`slice` - вывести строки в опреденном диапазоне (используя просто индексы строк)
+
+```{r}
+wc3_units %>% 
+  slice(10:15)
+```
+
+`count` - для удобного подсчета количества элементов по категориям
+
+```{r}
+#| output: true
+wc3_units %>% 
+  count(race)
+```
+
+## Другие функции: count
+
+`count` очень удобен еще и тем, что позволяет вывести количество элементов сразу по нескольким категориям, например
+
+```{r}
+#| output: true
+#| output-location: slide
+wc3_units %>% 
+  count(race, ground_attack)
+```
+
+Как думаете, для чего это может быть полезно?
+
+## Считывание данных в формате Excel
+
+Библиотека readxl
+
+```{r}
+#| eval: false
+library(readxl)
+df <- read_xlsx('table_of_NA.xlsx', sheet = 'Sheet1')
+```
+
+## Pivot_longer / pivot_wider - конвертация таблиц
+
+## Join
