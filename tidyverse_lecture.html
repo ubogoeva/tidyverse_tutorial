@@ -388,7 +388,7 @@
 <section id="title-slide" class="center">
   <h1 class="title">Введение в tidyverse: основные функции dplyr</h1>
   <p class="author">Elena U</p>
-  <p class="date">Created on 17 Nov, 2022 <br>Last compiled on 22 ноя, 2022</p>
+  <p class="date">Created on 17 Nov, 2022 <br>Last compiled on 23 ноя, 2022</p>
 </section>
 
 <section id="цель-занятия" class="slide level2">
@@ -445,6 +445,7 @@
 <li><p>Visualisation: <a href="https://ggplot2.tidyverse.org/#cheatsheet">ggplot2</a></p></li>
 <li><p>String manipulation: <a href="https://stringr.tidyverse.org/#cheatsheet">stringr</a></p></li>
 </ul>
+<p>Лучше всего найти актуальные читшиты из самой RStudio: Help -&gt; Cheet Sheets</p>
 </section>
 <section id="установка-tidyverse" class="slide level2">
 <h2>Установка tidyverse</h2>
@@ -3119,14 +3120,71 @@
 </div>
 </div>
 </section>
+<section id="mutate-if_else-1" class="slide level2">
+<h2>Mutate + if_else</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>wc3_units_summon_ifelse <span class="ot">&lt;-</span> wc3_units <span class="sc">%&gt;%</span> </span>
+<span id="cb24-2"><a href="#cb24-2"></a>  <span class="fu">mutate</span>(<span class="at">if_summon =</span> <span class="fu">if_else</span>((pop <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">|</span> <span class="fu">is.na</span>(pop), </span>
+<span id="cb24-3"><a href="#cb24-3"></a>                            <span class="st">'Призванные'</span>, <span class="st">'Непризванные'</span>))</span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="fu">kbl</span>(wc3_units_summon_ifelse <span class="sc">%&gt;%</span> </span>
+<span id="cb24-5"><a href="#cb24-5"></a>      <span class="fu">select</span>(unit, race, pop, if_summon) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-6"><a href="#cb24-6"></a>      <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<table>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> unit </th>
+   <th style="text-align:left;"> race </th>
+   <th style="text-align:right;"> pop </th>
+   <th style="text-align:left;"> if_summon </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Water Elemental 1 </td>
+   <td style="text-align:left;"> Human </td>
+   <td style="text-align:right;"> NA </td>
+   <td style="text-align:left;"> Призванные </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Meat Wagon </td>
+   <td style="text-align:left;"> Undead </td>
+   <td style="text-align:right;"> 4 </td>
+   <td style="text-align:left;"> Непризванные </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Treant </td>
+   <td style="text-align:left;"> N.Elf </td>
+   <td style="text-align:right;"> NA </td>
+   <td style="text-align:left;"> Призванные </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> T. Berserker </td>
+   <td style="text-align:left;"> Orc </td>
+   <td style="text-align:right;"> 2 </td>
+   <td style="text-align:left;"> Непризванные </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Acolyte </td>
+   <td style="text-align:left;"> Undead </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:left;"> Непризванные </td>
+  </tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</section>
 <section id="mutate-с-условием-case_when" class="slide level2">
 <h2>Mutate с условием + case_when</h2>
 <p>Если нужно использовать более чем 1 условие, то рекомендую воспользоваться функцией <code>case_when</code> из библиотеки dplyr.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
-<span id="cb24-2"><a href="#cb24-2"></a>  number <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Положительное число"</span>,</span>
-<span id="cb24-3"><a href="#cb24-3"></a>  number <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Отрицательное число"</span>,</span>
-<span id="cb24-4"><a href="#cb24-4"></a>  number <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Ноль"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
+<span id="cb25-2"><a href="#cb25-2"></a>  number <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Положительное число"</span>,</span>
+<span id="cb25-3"><a href="#cb25-3"></a>  number <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Отрицательное число"</span>,</span>
+<span id="cb25-4"><a href="#cb25-4"></a>  number <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Ноль"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Отрицательное число" "Отрицательное число" "Ноль"               
 [4] "Положительное число" "Положительное число"</code></pre>
@@ -3137,10 +3195,10 @@
 <h2>Mutate с условием + case_when</h2>
 <p>Пример с <code>mutate</code>+<code>case_when</code> не придумала для wc3 датасета</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a><span class="fu">tibble</span>(<span class="at">number =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-2"><a href="#cb26-2"></a>  <span class="fu">mutate</span>(<span class="at">is_plus =</span> <span class="fu">case_when</span>(number <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Положительное число"</span>,</span>
-<span id="cb26-3"><a href="#cb26-3"></a>  number <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Отрицательное число"</span>,</span>
-<span id="cb26-4"><a href="#cb26-4"></a>  number <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Ноль"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="fu">tibble</span>(<span class="at">number =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2"></a>  <span class="fu">mutate</span>(<span class="at">is_plus =</span> <span class="fu">case_when</span>(number <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Положительное число"</span>,</span>
+<span id="cb27-3"><a href="#cb27-3"></a>  number <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Отрицательное число"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4"></a>  number <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"Ноль"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 2
   number is_plus            
@@ -3156,15 +3214,15 @@
 <section id="group_by-summarise-связка" class="slide level2">
 <h2>Group_by + summarise связка</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>wc3_units <span class="sc">%&gt;%</span> </span>
-<span id="cb28-2"><a href="#cb28-2"></a>  <span class="fu">group_by</span>(race) <span class="sc">%&gt;%</span> </span>
-<span id="cb28-3"><a href="#cb28-3"></a>  <span class="fu">summarise</span>(<span class="at">median_damage =</span> <span class="fu">median</span>(damage, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb28-4"><a href="#cb28-4"></a></span>
-<span id="cb28-5"><a href="#cb28-5"></a><span class="co"># Можно сразу собирать несколько средних:</span></span>
-<span id="cb28-6"><a href="#cb28-6"></a>wc3_units <span class="sc">%&gt;%</span> </span>
-<span id="cb28-7"><a href="#cb28-7"></a>  <span class="fu">group_by</span>(race) <span class="sc">%&gt;%</span> </span>
-<span id="cb28-8"><a href="#cb28-8"></a>  <span class="fu">summarise</span>(<span class="at">median_damage =</span> <span class="fu">median</span>(damage, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb28-9"><a href="#cb28-9"></a>            <span class="at">median_hp =</span> <span class="fu">median</span>(hp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>wc3_units <span class="sc">%&gt;%</span> </span>
+<span id="cb29-2"><a href="#cb29-2"></a>  <span class="fu">group_by</span>(race) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-3"><a href="#cb29-3"></a>  <span class="fu">summarise</span>(<span class="at">median_damage =</span> <span class="fu">median</span>(damage, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb29-4"><a href="#cb29-4"></a></span>
+<span id="cb29-5"><a href="#cb29-5"></a><span class="co"># Можно сразу собирать несколько средних:</span></span>
+<span id="cb29-6"><a href="#cb29-6"></a>wc3_units <span class="sc">%&gt;%</span> </span>
+<span id="cb29-7"><a href="#cb29-7"></a>  <span class="fu">group_by</span>(race) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-8"><a href="#cb29-8"></a>  <span class="fu">summarise</span>(<span class="at">median_damage =</span> <span class="fu">median</span>(damage, <span class="at">na.rm =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb29-9"><a href="#cb29-9"></a>            <span class="at">median_hp =</span> <span class="fu">median</span>(hp, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="group_by-summarise-связка-1" class="slide level2">
@@ -3175,11 +3233,11 @@
 <h2>Across + summarise - для быстрого вычисления описательных статистик</h2>
 <p>Начнет с summarise. Например, задача посчитать медиану для всех числовых переменных в датасете wc3_units</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(wc3_units_summon <span class="sc">%&gt;%</span></span>
-<span id="cb29-2"><a href="#cb29-2"></a>  <span class="fu">filter</span>(<span class="sc">!</span>is_summon) <span class="sc">%&gt;%</span> <span class="co"># чтобы анализировать только не-призванных юнитов</span></span>
-<span id="cb29-3"><a href="#cb29-3"></a>  <span class="fu">group_by</span>(race) <span class="sc">%&gt;%</span> </span>
-<span id="cb29-4"><a href="#cb29-4"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), </span>
-<span id="cb29-5"><a href="#cb29-5"></a>                   <span class="at">.fns =</span> <span class="sc">~</span><span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(wc3_units_summon <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a>  <span class="fu">filter</span>(<span class="sc">!</span>is_summon) <span class="sc">%&gt;%</span> <span class="co"># чтобы анализировать только не-призванных юнитов</span></span>
+<span id="cb30-3"><a href="#cb30-3"></a>  <span class="fu">group_by</span>(race) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-4"><a href="#cb30-4"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), </span>
+<span id="cb30-5"><a href="#cb30-5"></a>                   <span class="at">.fns =</span> <span class="sc">~</span><span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
 <table>
@@ -3291,9 +3349,9 @@
 
 <p>Или пример попроще:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(iris <span class="sc">%&gt;%</span> </span>
-<span id="cb30-2"><a href="#cb30-2"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), </span>
-<span id="cb30-3"><a href="#cb30-3"></a>                   <span class="fu">list</span>(<span class="at">mean =</span> mean, <span class="at">sd =</span> sd))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(iris <span class="sc">%&gt;%</span> </span>
+<span id="cb31-2"><a href="#cb31-2"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), </span>
+<span id="cb31-3"><a href="#cb31-3"></a>                   <span class="fu">list</span>(<span class="at">mean =</span> mean, <span class="at">sd =</span> sd))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
 <table>
@@ -3329,18 +3387,59 @@
 </section>
 <section id="across-mutate" class="slide level2">
 <h2>Across + mutate</h2>
-<p>Это супер полезная штука, актуальная в наших исследованиях. Например заменить все что не <code>NA</code> и не ноль на 1.</p>
+<p>Это очень актуальная вещь при работе с транскриптомными данными. Например заменить logFC, которые не <code>NA</code> и не ноль на 1. Создадим пример таблицы:</p>
 <div class="cell">
-
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a>gene_table <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">id =</span> <span class="fu">paste0</span>(<span class="st">'gene'</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>), </span>
+<span id="cb32-2"><a href="#cb32-2"></a>                     <span class="at">logFC_df1 =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">runif</span>(<span class="dv">6</span>, <span class="at">min =</span> <span class="sc">-</span><span class="dv">5</span>, <span class="at">max =</span> <span class="dv">5</span>), <span class="cn">NA</span>), <span class="dv">8</span>),</span>
+<span id="cb32-3"><a href="#cb32-3"></a>                     <span class="at">FDR_df1 =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="fu">runif</span>(<span class="dv">6</span>, <span class="dv">10</span><span class="sc">^-</span><span class="dv">50</span>, <span class="dv">1</span>), <span class="fl">0.01</span>, <span class="fl">0.0005</span>), <span class="dv">8</span>),</span>
+<span id="cb32-4"><a href="#cb32-4"></a>                     <span class="at">logFC_df2 =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">runif</span>(<span class="dv">6</span>, <span class="at">min =</span> <span class="sc">-</span><span class="dv">5</span>, <span class="at">max =</span> <span class="dv">5</span>), <span class="cn">NA</span>), <span class="dv">8</span>),</span>
+<span id="cb32-5"><a href="#cb32-5"></a>                     <span class="at">FDR_df2 =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="fu">runif</span>(<span class="dv">6</span>, <span class="dv">10</span><span class="sc">^-</span><span class="dv">50</span>, <span class="dv">1</span>), <span class="fl">0.001</span>, <span class="fl">0.03</span>), <span class="dv">8</span>))</span>
+<span id="cb32-6"><a href="#cb32-6"></a>gene_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 5
+  id    logFC_df1 FDR_df1 logFC_df2 FDR_df2
+  &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 gene1      4.35  0.108     -4.29   0.339 
+2 gene2      0     0.186     -2.55   0.258 
+3 gene3      1.52  0.01       1.93   0.766 
+4 gene4     NA     0.668     -0.224  0.03  
+5 gene5     -2.88  0.794     NA      0.0842
+6 gene6      4.92  0.0005     3.61   0.479 
+7 gene7     -1.20  0.827     -0.619  0.001 
+8 gene8      2.77  0.494      0      0.875 </code></pre>
 </div>
+</div>
+</section>
+<section id="across-mutate-1" class="slide level2">
+<h2>Across + mutate</h2>
+<p>Теперь заменим:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a>gene_table <span class="sc">%&gt;%</span> </span>
+<span id="cb34-2"><a href="#cb34-2"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">'logFC'</span>), </span>
+<span id="cb34-3"><a href="#cb34-3"></a>                <span class="at">.fns =</span> <span class="sc">~</span><span class="fu">if_else</span>(.x <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> <span class="fu">is.na</span>(.x), <span class="dv">0</span>, <span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 5
+  id    logFC_df1 FDR_df1 logFC_df2 FDR_df2
+  &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 gene1         1  0.108          1  0.339 
+2 gene2         0  0.186          1  0.258 
+3 gene3         1  0.01           1  0.766 
+4 gene4         0  0.668          1  0.03  
+5 gene5         1  0.794          0  0.0842
+6 gene6         1  0.0005         1  0.479 
+7 gene7         1  0.827          1  0.001 
+8 gene8         1  0.494          0  0.875 </code></pre>
+</div>
+</div>
+<p>Еще нередко возникает задача например занулить все незначимые по FDR значения logFC для каждого датасета, но это лучше сделать, используя перевод данных из широкого в длинный формат</p>
 </section>
 <section id="arrange---сортировка" class="slide level2">
 <h2>Arrange - сортировка</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a>n_elf_dm40 <span class="ot">&lt;-</span>  wc3_units <span class="sc">%&gt;%</span> </span>
-<span id="cb31-2"><a href="#cb31-2"></a>  <span class="fu">filter</span>(race <span class="sc">==</span> <span class="st">'N.Elf'</span> <span class="sc">&amp;</span> damage <span class="sc">&gt;</span> <span class="dv">40</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb31-3"><a href="#cb31-3"></a>  <span class="fu">select</span>(unit<span class="sc">:</span>race, ground_attack<span class="sc">:</span>damage) <span class="sc">%&gt;%</span> </span>
-<span id="cb31-4"><a href="#cb31-4"></a>  <span class="fu">arrange</span>(damage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a>n_elf_dm40 <span class="ot">&lt;-</span>  wc3_units <span class="sc">%&gt;%</span> </span>
+<span id="cb36-2"><a href="#cb36-2"></a>  <span class="fu">filter</span>(race <span class="sc">==</span> <span class="st">'N.Elf'</span> <span class="sc">&amp;</span> damage <span class="sc">&gt;</span> <span class="dv">40</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-3"><a href="#cb36-3"></a>  <span class="fu">select</span>(unit<span class="sc">:</span>race, ground_attack<span class="sc">:</span>damage) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-4"><a href="#cb36-4"></a>  <span class="fu">arrange</span>(damage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -3387,22 +3486,46 @@
 <p><code>desc</code> - для сортировки по убыванию.</p>
 <p>Как думаете, есть ли преимущество относительно базовой функции <code>order</code> или <code>sort</code>, в которой есть параметр <code>decreasing = TRUE</code>?</p>
 </section>
-<section id="другие-функции-top_n" class="slide level2">
-<h2>Другие функции: top_n</h2>
-<p><code>top_n</code> - вывести топовые значения по какому-то признаку</p>
+<section id="slice---выбираем-строки-по-индексу" class="slide level2">
+<h2>slice - выбираем строки по индексу</h2>
+<p><code>slice</code> - вывести строки в опреденном диапазоне (используя просто индексы строк)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a>wc3_units <span class="sc">%&gt;%</span> </span>
-<span id="cb32-2"><a href="#cb32-2"></a>  <span class="fu">top_n</span>(damage, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> <span class="co"># важно эксплицитно писать параметр n = </span></span>
-<span id="cb32-3"><a href="#cb32-3"></a>  <span class="fu">select</span>(unit, race, damage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>wc3_units <span class="sc">%&gt;%</span> </span>
+<span id="cb37-2"><a href="#cb37-2"></a>  <span class="fu">slice</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>slice_max</code> - вывести максимальные значения по какому-то признаку</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a>wc3_units <span class="sc">%&gt;%</span> </span>
+<span id="cb38-2"><a href="#cb38-2"></a>  <span class="fu">slice_max</span>(wood, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> <span class="co"># важно эксплицитно писать параметр n = </span></span>
+<span id="cb38-3"><a href="#cb38-3"></a>  <span class="fu">select</span>(unit, race, wood)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
-  unit       race   damage
-  &lt;chr&gt;      &lt;chr&gt;   &lt;dbl&gt;
-1 Phoenix    Human    68  
-2 Demolisher Orc      80.5
-3 Chimaera   N.Elf    75  
-4 Meat Wagon Undead   79.5
-5 Frost Wyrm Undead  104  </code></pre>
+  unit             race    wood
+  &lt;chr&gt;            &lt;chr&gt;  &lt;int&gt;
+1 Frost Wyrm       Undead   120
+2 Mountain Giant   N.Elf    100
+3 Mountain Giant 2 N.Elf    100
+4 Tauren           Orc       80
+5 DoC Druid Form   N.Elf     80</code></pre>
+</div>
+</div>
+</section>
+<section id="slice_max-slice_min" class="slide level2">
+<h2>slice_max, slice_min</h2>
+<p><code>slice_min</code> - вывести минимальные значения по какому-то признаку</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a>wc3_units <span class="sc">%&gt;%</span> </span>
+<span id="cb40-2"><a href="#cb40-2"></a>  <span class="fu">slice_min</span>(hp, <span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-3"><a href="#cb40-3"></a>  <span class="fu">select</span>(unit, race, hp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 3
+  unit             race      hp
+  &lt;chr&gt;            &lt;chr&gt;  &lt;int&gt;
+1 Serpent Ward     Orc       75
+2 Wisp             N.Elf    120
+3 Shade            Undead   125
+4 DoC Druid Form   N.Elf    130
+5 Carrion Beetle 1 Undead   140</code></pre>
 </div>
 </div>
 <div class="callout callout-note callout-captioned callout-style-default">
@@ -3414,22 +3537,19 @@
 <p><strong>Note</strong></p>
 </div>
 <div class="callout-content">
-<p>Функция <code>top_n</code> не сортирует выдачу, для сортировки нужно использовать <code>arrange</code></p>
+<p>Функции <code>slice_max/slice_min</code> сортируют выдачу, в отличие от теперь устаревшей <code>top_n</code></p>
 </div>
 </div>
 </div>
 </section>
-<section id="другие-функции-slice-count" class="slide level2">
-<h2>Другие функции: slice, count</h2>
-<p><code>slice</code> - вывести строки в опреденном диапазоне (используя просто индексы строк)</p>
+<section id="другие-функции-count" class="slide level2">
+<h2>Другие функции: count</h2>
+<p><code>count</code> - для удобного подсчета количества элементов по категориям. Можно выводить по нескольким категориям сразу</p>
+<div class="columns">
+<div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a>wc3_units <span class="sc">%&gt;%</span> </span>
-<span id="cb34-2"><a href="#cb34-2"></a>  <span class="fu">slice</span>(<span class="dv">10</span><span class="sc">:</span><span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p><code>count</code> - для удобного подсчета количества элементов по категориям</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>wc3_units <span class="sc">%&gt;%</span> </span>
-<span id="cb35-2"><a href="#cb35-2"></a>  <span class="fu">count</span>(race)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>wc3_units <span class="sc">%&gt;%</span> </span>
+<span id="cb42-2"><a href="#cb42-2"></a>  <span class="fu">count</span>(race)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 4 × 2
   race       n
@@ -3440,15 +3560,10 @@
 4 Undead    18</code></pre>
 </div>
 </div>
-</section>
-<section id="другие-функции-count" class="slide level2">
-<h2>Другие функции: count</h2>
-<p><code>count</code> очень удобен еще и тем, что позволяет вывести количество элементов сразу по нескольким категориям, например:</p>
-<div class="columns">
-<div class="column" style="width:50%;">
+</div><div class="column" style="width:50%;">
 <div class="cell" data-output-location="column-fragment">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>wc3_units <span class="sc">%&gt;%</span> </span>
-<span id="cb37-2"><a href="#cb37-2"></a>  <span class="fu">count</span>(race, ground_attack)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a>wc3_units <span class="sc">%&gt;%</span> </span>
+<span id="cb44-2"><a href="#cb44-2"></a>  <span class="fu">count</span>(race, ground_attack)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 19 × 3
    race   ground_attack     n
@@ -3474,56 +3589,231 @@
 19 Undead &lt;NA&gt;              1</code></pre>
 </div>
 </div>
-</div><div class="column" style="width:50%;">
-
 </div>
 </div>
-<pre><code></code></pre>
 <p>Как думаете, для чего это может быть полезно?</p>
 </section>
 <section id="считывание-данных-в-формате-excel" class="slide level2">
 <h2>Считывание данных в формате Excel</h2>
-<p>Библиотека readxl</p>
+<p>Библиотека <code>readxl</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb40-2"><a href="#cb40-2"></a>df <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">'table_of_NA.xlsx'</span>, <span class="at">sheet =</span> <span class="st">'Sheet1'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb46-2"><a href="#cb46-2"></a>df <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">'table_of_NA.xlsx'</span>, <span class="at">sheet =</span> <span class="st">'Sheet1'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="pivot_longer-pivot_wider---конвертация-таблиц" class="slide level2">
 <h2>Pivot_longer / pivot_wider - конвертация таблиц</h2>
 <p>Это функции из пакета <code>tidyr</code> для перевода датафрейма в длинный или широкий формат.</p>
-<p>Использую очень часто для стат обработки экспериментальных данных.</p>
-<p>Например,</p>
+<p>Использую очень часто в процессе статистической обработки экспериментальных данных. Например,</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">attached =</span> <span class="fu">sample</span>(<span class="dv">5</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">10</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>), </span>
-<span id="cb41-2"><a href="#cb41-2"></a>             <span class="at">detached =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>), <span class="dv">10</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb41-3"><a href="#cb41-3"></a>             <span class="at">genotype =</span> <span class="st">'Col0'</span>)</span>
-<span id="cb41-4"><a href="#cb41-4"></a>df <span class="sc">%&gt;%</span> </span>
-<span id="cb41-5"><a href="#cb41-5"></a>  <span class="fu">mutate</span>(<span class="at">total =</span> attached <span class="sc">+</span> detached) <span class="sc">%&gt;%</span> </span>
-<span id="cb41-6"><a href="#cb41-6"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> detached)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a>df <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">attached =</span> <span class="fu">sample</span>(<span class="dv">5</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">10</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>), </span>
+<span id="cb47-2"><a href="#cb47-2"></a>             <span class="at">detached =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>), <span class="dv">10</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb47-3"><a href="#cb47-3"></a>             <span class="at">genotype =</span> <span class="st">'Col0'</span>)</span>
+<span id="cb47-4"><a href="#cb47-4"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 3
+   attached detached genotype
+      &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;   
+ 1        6        2 Col0    
+ 2        6        4 Col0    
+ 3        6        3 Col0    
+ 4        5        4 Col0    
+ 5        5        2 Col0    
+ 6        5        2 Col0    
+ 7        6        3 Col0    
+ 8        5        2 Col0    
+ 9        6        2 Col0    
+10        5        2 Col0    </code></pre>
 </div>
-<p>В простейшем случае синтаксис pivot_longer: <code>cols</code> = колонки, которые необходимо трансформировать. Можно добавить параметры <code>names_to</code> и <code>values_to</code>, которые добавят имена вновь возданным колонкам.</p>
+</div>
 </section>
 <section id="pivot_longer" class="slide level2">
+<h2>Pivot_longer</h2>
+<p>В простейшем случае синтаксис pivot_longer: <code>cols</code> = колонки, которые необходимо трансформировать. Можно добавить параметры <code>names_to</code> и <code>values_to</code>, которые добавят имена вновь возданным колонкам.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1"></a>(df_long <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb49-2"><a href="#cb49-2"></a>    <span class="fu">mutate</span>(<span class="at">id =</span> <span class="fu">row_number</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb49-3"><a href="#cb49-3"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> attached<span class="sc">:</span>detached))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 4
+   genotype    id name     value
+   &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;    &lt;dbl&gt;
+ 1 Col0         1 attached     6
+ 2 Col0         1 detached     2
+ 3 Col0         2 attached     6
+ 4 Col0         2 detached     4
+ 5 Col0         3 attached     6
+ 6 Col0         3 detached     3
+ 7 Col0         4 attached     5
+ 8 Col0         4 detached     4
+ 9 Col0         5 attached     5
+10 Col0         5 detached     2
+11 Col0         6 attached     5
+12 Col0         6 detached     2
+13 Col0         7 attached     6
+14 Col0         7 detached     3
+15 Col0         8 attached     5
+16 Col0         8 detached     2
+17 Col0         9 attached     6
+18 Col0         9 detached     2
+19 Col0        10 attached     5
+20 Col0        10 detached     2</code></pre>
+</div>
+</div>
+</section>
+<section id="pivot_longer-1" class="slide level2">
 <h2>Pivot_longer</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p><img data-src="figures/sandwich_pivot.PNG" width="1500"></p>
 </div><div class="column" style="width:50%;">
 <p>Для выбора колонок можно использовать концепт <code>tidy-select</code>-а.</p>
+<p>Лучше всего еще перед трансформацией создать колонку с id каждого наблюдения.</p>
+<p>Длинный формат более удобен для проведения дисперсионного анализа, построения графиков.</p>
 </div>
 </div>
 </section>
 <section id="pivot_wider" class="slide level2">
 <h2>Pivot_wider</h2>
 <p>Нередко нужно вернуть обратно таблицу в широкий формат</p>
+<p>Например так:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a>df_long <span class="sc">%&gt;%</span> </span>
+<span id="cb51-2"><a href="#cb51-2"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(genotype, id), </span>
+<span id="cb51-3"><a href="#cb51-3"></a>              <span class="at">names_from =</span> name, <span class="at">values_from =</span> value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 4
+   genotype    id attached detached
+   &lt;chr&gt;    &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+ 1 Col0         1        6        2
+ 2 Col0         2        6        4
+ 3 Col0         3        6        3
+ 4 Col0         4        5        4
+ 5 Col0         5        5        2
+ 6 Col0         6        5        2
+ 7 Col0         7        6        3
+ 8 Col0         8        5        2
+ 9 Col0         9        6        2
+10 Col0        10        5        2</code></pre>
+</div>
+</div>
+</section>
+<section id="теперь-как-занулить-все-незначимые-фолды" class="slide level2">
+<h2>Теперь как занулить все незначимые фолды</h2>
+<p>Вернемся к таблице gene_table. Задача превратить в ноль все фолды, для которых FDR &gt; 0.05</p>
+<div>
+<ul>
+<li class="fragment"><p>Сначала переводим в лонг формат</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1"></a>gene_table <span class="sc">%&gt;%</span> </span>
+<span id="cb53-2"><a href="#cb53-2"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">names_pattern =</span> <span class="st">"(.*)_(.*)"</span>,</span>
+<span id="cb53-3"><a href="#cb53-3"></a>               <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">'.value'</span>, <span class="st">'dataset'</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 16 × 4
+   id    dataset  logFC    FDR
+   &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;
+ 1 gene1 df1      4.35  0.108 
+ 2 gene1 df2     -4.29  0.339 
+ 3 gene2 df1      0     0.186 
+ 4 gene2 df2     -2.55  0.258 
+ 5 gene3 df1      1.52  0.01  
+ 6 gene3 df2      1.93  0.766 
+ 7 gene4 df1     NA     0.668 
+ 8 gene4 df2     -0.224 0.03  
+ 9 gene5 df1     -2.88  0.794 
+10 gene5 df2     NA     0.0842
+11 gene6 df1      4.92  0.0005
+12 gene6 df2      3.61  0.479 
+13 gene7 df1     -1.20  0.827 
+14 gene7 df2     -0.619 0.001 
+15 gene8 df1      2.77  0.494 
+16 gene8 df2      0     0.875 </code></pre>
+</div>
+</div></li>
+</ul>
+<!-- -->
+<ul>
+<li class="fragment"><p>Затем</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1"></a>gene_table <span class="sc">%&gt;%</span> </span>
+<span id="cb55-2"><a href="#cb55-2"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">names_pattern =</span> <span class="st">"(.*)_(.*)"</span>,</span>
+<span id="cb55-3"><a href="#cb55-3"></a>               <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">'.value'</span>, <span class="st">'dataset'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb55-4"><a href="#cb55-4"></a>    <span class="fu">mutate</span>(<span class="at">logFC =</span> <span class="fu">if_else</span>(FDR <span class="sc">&lt;</span> <span class="fl">0.05</span>, logFC, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+</ul>
+<!-- -->
+<ul>
+<li class="fragment"><p>аа</p></li>
+<li class="fragment"><p>ы</p></li>
+</ul>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56" data-code-line-numbers="|2-3|4|5-6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1"></a>gene_table <span class="sc">%&gt;%</span> </span>
+<span id="cb56-2"><a href="#cb56-2"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">where</span>(is.numeric), <span class="at">names_pattern =</span> <span class="st">"(.*)_(.*)"</span>,</span>
+<span id="cb56-3"><a href="#cb56-3"></a>               <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">'.value'</span>, <span class="st">'dataset'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-4"><a href="#cb56-4"></a>  <span class="fu">mutate</span>(<span class="at">logFC =</span> <span class="fu">if_else</span>(FDR <span class="sc">&lt;</span> <span class="fl">0.05</span>, logFC, <span class="dv">0</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-5"><a href="#cb56-5"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> id, <span class="at">names_from =</span> dataset, </span>
+<span id="cb56-6"><a href="#cb56-6"></a>              <span class="at">values_from =</span> <span class="fu">c</span>(logFC, FDR), <span class="at">names_vary =</span> <span class="st">'slowest'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 8 × 5
+  id    logFC_df1 FDR_df1 logFC_df2 FDR_df2
+  &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 gene1      0     0.108      0      0.339 
+2 gene2      0     0.186      0      0.258 
+3 gene3      1.52  0.01       0      0.766 
+4 gene4      0     0.668     -0.224  0.03  
+5 gene5      0     0.794      0      0.0842
+6 gene6      4.92  0.0005     0      0.479 
+7 gene7      0     0.827     -0.619  0.001 
+8 gene8      0     0.494      0      0.875 </code></pre>
+</div>
+</div>
 </section>
 <section id="join" class="slide level2">
 <h2>Join</h2>
 </section>
 <section id="заключение" class="slide level2">
 <h2>Заключение</h2>
-<p>Основные</p>
+<p>Мы прошли основные функции для преобразования таблиц из библиотеки <code>dplyr</code>.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li><p><code>select</code></p></li>
+<li><p><code>filter</code></p></li>
+<li><p><code>arrange</code></p></li>
+<li><p><code>mutate</code></p></li>
+<li><p><code>group_by</code></p></li>
+<li><p><code>summarise</code></p></li>
+<li><p><code>across</code> в связке с <code>mutate</code> и <code>summarise</code></p></li>
+<li><p><code>pivot_longer</code> / <code>pivot_wider</code></p></li>
+<li><p>full_join, inner_join, left_join</p></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<ul>
+<li><p><code>case_when</code></p></li>
+<li><p><code>count</code></p></li>
+<li><p><code>slice</code> и его товарищи:</p>
+<ul>
+<li><p><code>slice_max</code>, <code>slice_min</code> отобрать наибольшие/наименьшие значения по какой-либо переменной</p></li>
+<li><p><code>slice_sample</code> случайно выбрать несколько строк из датасета</p></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="вопросы" class="slide level2">
+<h2>Вопросы?</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
+<p>Презентация сделана целиком в R, используя <a href="https://quarto.org/">quarto</a></p>
+<p><img data-src="images/paste-6E046C96.png"></p>
+<p>Подписывайтесь на телеграм-канал: <a href="https://t.me/stats_for_science">Статистика и R</a></p>
+<p><img data-src="images/paste-78E5F205.png" width="259"></p>
+</div><div class="column" style="width:50%;">
+<p>А еще мы заказывали значки и стикеры с <code>tidyverse</code> в RStudio office</p>
+<p><img data-src="images/paste-078A24F8.png" width="570"></p>
+</div>
+</div>
 <div class="footer footer-default">
 
 </div>

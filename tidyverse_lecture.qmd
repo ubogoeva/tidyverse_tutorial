@@ -92,6 +92,8 @@ library(kableExtra)
 
 -   String manipulation: [stringr](https://stringr.tidyverse.org/#cheatsheet)
 
+Лучше всего найти актуальные читшиты из самой RStudio: Help -\> Cheet Sheets
+
 ## Установка tidyverse
 
 Для установки всего набора "пакета с пакетами" достаточно набрать в консоли R:
@@ -391,6 +393,18 @@ if_else(number > 0, 'Положительное число',
 Функция `if` в R является невекторизованной, то есть с помощью if можно сравнивать только одно значение, а не целый вектор.
 :::
 
+## Mutate + if_else
+
+```{r}
+#| output: true
+wc3_units_summon_ifelse <- wc3_units %>% 
+  mutate(if_summon = if_else((pop == 0) | is.na(pop), 
+                            'Призванные', 'Непризванные'))
+kbl(wc3_units_summon_ifelse %>% 
+      select(unit, race, pop, if_summon) %>% 
+      slice_sample(n = 5))
+```
+
 ## Mutate с условием + case_when
 
 Если нужно использовать более чем 1 условие, то рекомендую воспользоваться функцией `case_when` из библиотеки dplyr.
@@ -452,7 +466,7 @@ knitr::kable(wc3_units_summon %>%
                    .fns = ~median(.x, na.rm = TRUE))))
 ```
 
----
+------------------------------------------------------------------------
 
 Или пример попроще:
 
@@ -468,12 +482,31 @@ knitr::kable(iris %>%
 
 ## Across + mutate
 
-Это супер полезная штука, актуальная в наших исследованиях. Например заменить все что не `NA` и не ноль на 1.
+Это очень актуальная вещь при работе с транскриптомными данными. Например заменить logFC, которые не `NA` и не ноль на 1. Создадим пример таблицы:
 
 ```{r}
 #| output: true
+gene_table <- tibble(id = paste0('gene', 1:8), 
+                     logFC_df1 = sample(c(0, runif(6, min = -5, max = 5), NA), 8),
+                     FDR_df1 = sample(c(runif(6, 10^-50, 1), 0.01, 0.0005), 8),
+                     logFC_df2 = sample(c(0, runif(6, min = -5, max = 5), NA), 8),
+                     FDR_df2 = sample(c(runif(6, 10^-50, 1), 0.001, 0.03), 8))
+gene_table
+```
+
+## Across + mutate
+
+Теперь заменим:
+
+```{r}
+#| output: true
+gene_table %>% 
+  mutate(across(starts_with('logFC'), 
+                .fns = ~if_else(.x == 0 | is.na(.x), 0, 1)))
 
 ```
+
+Еще нередко возникает задача например занулить все незначимые по FDR значения logFC для каждого датасета, но это лучше сделать, используя перевод данных из широкого в длинный формат
 
 ## Arrange - сортировка
 
@@ -494,22 +527,7 @@ knitr::kable(n_elf_dm40)
 
 Как думаете, есть ли преимущество относительно базовой функции `order` или `sort`, в которой есть параметр `decreasing = TRUE`?
 
-## Другие функции: top_n
-
-`top_n` - вывести топовые значения по какому-то признаку
-
-```{r}
-#| output: true
-wc3_units %>% 
-  top_n(damage, n = 5) %>% # важно эксплицитно писать параметр n = 
-  select(unit, race, damage)
-```
-
-::: callout-note
-Функция `top_n` не сортирует выдачу, для сортировки нужно использовать `arrange`
-:::
-
-## Другие функции: slice, count
+## slice - выбираем строки по индексу
 
 `slice` - вывести строки в опреденном диапазоне (используя просто индексы строк)
 
@@ -518,19 +536,44 @@ wc3_units %>%
   slice(10:15)
 ```
 
-`count` - для удобного подсчета количества элементов по категориям
+`slice_max` - вывести максимальные значения по какому-то признаку
 
+```{r}
+#| output: true
+wc3_units %>% 
+  slice_max(wood, n = 5) %>% # важно эксплицитно писать параметр n = 
+  select(unit, race, wood)
+```
+
+## slice_max, slice_min 
+
+`slice_min` - вывести минимальные значения по какому-то признаку
+
+```{r}
+#| output: true
+wc3_units %>% 
+  slice_min(hp, n = 5) %>% 
+  select(unit, race, hp)
+
+```
+
+::: callout-note
+Функции `slice_max/slice_min` сортируют выдачу, в отличие от теперь устаревшей `top_n`
+:::
+
+## Другие функции: count
+
+`count` - для удобного подсчета количества элементов по категориям. Можно выводить по нескольким категориям сразу
+
+::: columns
+::: {.column width="50%"}
 ```{r}
 #| output: true
 wc3_units %>% 
   count(race)
 ```
+:::
 
-## Другие функции: count
-
-`count` очень удобен еще и тем, что позволяет вывести количество элементов сразу по нескольким категориям, например:
-
-::: columns
 ::: {.column width="50%"}
 ```{r}
 #| output: true
@@ -539,19 +582,13 @@ wc3_units %>%
   count(race, ground_attack)
 ```
 :::
-
-::: {.column width="50%"}
 :::
-:::
-
-```{}
-```
 
 Как думаете, для чего это может быть полезно?
 
 ## Считывание данных в формате Excel
 
-Библиотека readxl
+Библиотека `readxl`
 
 ```{r}
 #| eval: false
@@ -563,20 +600,27 @@ df <- read_xlsx('table_of_NA.xlsx', sheet = 'Sheet1')
 
 Это функции из пакета `tidyr` для перевода датафрейма в длинный или широкий формат.
 
-Использую очень часто для стат обработки экспериментальных данных.
-
-Например,
+Использую очень часто в процессе статистической обработки экспериментальных данных. Например,
 
 ```{r}
+#| output: true
+#| output-location: default
 df <- tibble(attached = sample(5:6, 10, replace = TRUE), 
              detached = sample(c(2,3,4), 10, replace = TRUE),
              genotype = 'Col0')
-df %>% 
-  mutate(total = attached + detached) %>% 
-  pivot_longer(cols = detached)
+df
 ```
 
+## Pivot_longer
+
 В простейшем случае синтаксис pivot_longer: `cols` = колонки, которые необходимо трансформировать. Можно добавить параметры `names_to` и `values_to`, которые добавят имена вновь возданным колонкам.
+
+```{r}
+#| output: true
+(df_long <- df %>% 
+    mutate(id = row_number()) %>% 
+    pivot_longer(cols = attached:detached))
+```
 
 ## Pivot_longer
 
@@ -587,6 +631,10 @@ df %>%
 
 ::: {.column width="50%"}
 Для выбора колонок можно использовать концепт `tidy-select`-а.
+
+Лучше всего еще перед трансформацией создать колонку с id каждого наблюдения.
+
+Длинный формат более удобен для проведения дисперсионного анализа, построения графиков.
 :::
 :::
 
@@ -594,8 +642,119 @@ df %>%
 
 Нередко нужно вернуть обратно таблицу в широкий формат
 
+Например так:
+
+```{r}
+#| output: true
+df_long %>% 
+  pivot_wider(id_cols = c(genotype, id), 
+              names_from = name, values_from = value)
+
+```
+
+## Теперь как занулить все незначимые фолды
+
+Вернемся к таблице gene_table. Задача превратить в ноль все фолды, для которых FDR \> 0.05
+
+::: incremental
+-   Сначала переводим в лонг формат
+
+    ```{r}
+    #| output: true
+
+    gene_table %>% 
+      pivot_longer(cols = where(is.numeric), names_pattern = "(.*)_(.*)",
+                   names_to = c('.value', 'dataset')) 
+    ```
+
+```{=html}
+<!-- -->
+```
+-   Затем
+
+    ```{r}
+    gene_table %>% 
+      pivot_longer(cols = where(is.numeric), names_pattern = "(.*)_(.*)",
+                   names_to = c('.value', 'dataset')) %>% 
+        mutate(logFC = if_else(FDR < 0.05, logFC, 0))
+    ```
+
+```{=html}
+<!-- -->
+```
+-   аа
+
+-   ы
+:::
+
+```{r}
+#| output: true
+#| code-line-numbers: "|2-3|4|5-6"
+gene_table %>% 
+  pivot_longer(cols = where(is.numeric), names_pattern = "(.*)_(.*)",
+               names_to = c('.value', 'dataset')) %>% 
+  mutate(logFC = if_else(FDR < 0.05, logFC, 0)) %>% 
+  pivot_wider(id_cols = id, names_from = dataset, 
+              values_from = c(logFC, FDR), names_vary = 'slowest')
+
+```
+
 ## Join
 
 ## Заключение
 
-Основные
+Мы прошли основные функции для преобразования таблиц из библиотеки `dplyr`.
+
+::: columns
+::: {.column width="50%"}
+-   `select`
+
+-   `filter`
+
+-   `arrange`
+
+-   `mutate`
+
+-   `group_by`
+
+-   `summarise`
+
+-   `across` в связке с `mutate` и `summarise`
+
+-   `pivot_longer` / `pivot_wider`
+
+-   full_join, inner_join, left_join
+:::
+
+::: {.column width="50%"}
+-   `case_when`
+
+-   `count`
+
+-   `slice` и его товарищи:
+
+    -   `slice_max`, `slice_min` отобрать наибольшие/наименьшие значения по какой-либо переменной
+
+    -   `slice_sample` случайно выбрать несколько строк из датасета
+:::
+:::
+
+## Вопросы?
+
+::: columns
+::: {.column width="40%"}
+Презентация сделана целиком в R, используя [quarto](https://quarto.org/)
+
+![](images/paste-6E046C96.png)
+
+Подписывайтесь на телеграм-канал: [Статистика и R](https://t.me/stats_for_science)
+
+![](images/paste-78E5F205.png){width="259"}
+:::
+
+::: {.column width="50%"}
+А еще мы заказывали значки и стикеры с `tidyverse` в RStudio office
+
+![](images/paste-078A24F8.png){width="570"}
+:::
+:::
