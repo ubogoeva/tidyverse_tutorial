@@ -1,0 +1,159 @@
+---
+title: "stat_lecture4"
+author: "Елена Убогоева"
+execute: 
+  echo: true
+format: 
+  revealjs:
+    slide-number: c/t
+    # mainfont: Arial
+    # fontsize: 14px
+    theme: [default, custom.scss]
+    # theme: [serif]
+    # mouse-wheel: true
+    auto-play-media: true
+    width: 1280
+    height: 720
+editor: visual
+---
+
+## Повторим материал предыдущей лекции
+
+-   `if`, `else`, `ifelse`, циклы `for`
+
+-   Использование векторизации: применение какой-либо функции к целому вектору
+
+-   Написание собственных функций
+
+    ```{r}
+    power_3 <- function(x) {
+      x ^ 3
+    }
+    ```
+
+-   Установка пакетов: `install.packages`
+
+## План сегодняшнего занятия
+
+-   Загрузка датасета
+
+-   Индексация на практике
+
+-   Описательные статистики
+
+## Загрузим данные для работы
+
+Статистики по юнитам из Warcraft 3.
+
+Скачала [отсюда](https://www.unitstatistics.com/warcraft3/) и сохранила в [github](https://raw.githubusercontent.com/ubogoeva/tidyverse_tutorial/master/data/wc3_heroes.txt)-репозитории.
+
+![](images/image-522688955.png){width="523"}
+
+Загрузим данные:
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+#| output: false
+#| code-line-numbers: "|3"
+wc3_units <- read.table('https://raw.githubusercontent.com/ubogoeva/tidyverse_tutorial/master/data/wc3_heroes.txt', 
+                         sep = '\t', header = TRUE, 
+                         na.strings = c('-'))
+```
+
+Здесь важно обратить внимание на параметр `na.strings = c('-')`
+
+## Посмотрим на данные
+
+Команда `head` выведет первые 6 строчек - полезно чтобы не выводить целый датафрейм в консоль
+
+```{r}
+head(wc3_units)
+```
+
+## Выбор колонок - разные способы
+
+-   Вектор индексов: таким же образом, как в матрицах
+
+```{r}
+wc3_units[, c(2:4, 7)] # выведем колонки со второй по четвертую и седьмую
+```
+
+## Выбор колонок - разные способы
+
+-   С помощью знака `$` как при выборе элементов в списке
+
+::: columns
+::: {.column width="50%"}
+Пример:
+
+```{r}
+wc3_units$Armor.Type
+```
+:::
+
+::: {.column width="50%"}
+Сравните с индексом:
+
+```{r}
+wc3_units[, 7]
+```
+:::
+:::
+
+## Выбор колонок - разные способы
+
+-   С помощью названия колонок в кавычках, можно также подавать целый вектор
+
+```{r}
+wc3_units[,'Armor.Type']
+```
+
+## Выбор колонок - разные способы
+
+-   Редкий способ: используя две квадратные скобки, как при индексации листов
+
+```{r}
+wc3_units[['Armor.Type']]
+```
+
+::: {.callout-note appearance="simple"}
+Здесь уже не нужно задумываться о запятых
+:::
+
+## Работа со строками - разные способы
+
+-   Вектор индексов: таким же образом как в матрицах
+
+```{r}
+wc3_units[15:20, ]
+```
+
+## Работа со строками - разные способы
+
+-   Можно индексировать с использованием логического условия, например:
+
+```{r}
+wc3_units[wc3_units$Race == 'Orc', ]
+```
+
+::: {.callout-tip appearance="simple"}
+Нужно не забывать про запятые, означающие строки, столбцы
+:::
+
+## Индексация по условию - действуют те же правила, что и при индексации векторов
+
+```{r}
+wc3_units[wc3_units$Race == 'Orc' & wc3_units$Armor.Type == 'Medium', ]
+```
+
+::: {.callout-note appearance="simple"}
+Можно использовать логическое AND, OR, NOT, а также знаки `>`, `<`, `>=`, `<=`
+:::
+
+## Можно комбинировать условия и выбор колонок
+
+```{r}
+wc3_units[wc3_units$Race == 'Orc' & wc3_units$Armor.Type == 'Medium', 
+          c(1,2,7)]
+```
+
+## Описательные статистики
